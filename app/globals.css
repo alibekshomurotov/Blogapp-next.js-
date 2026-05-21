@@ -1,10 +1,6 @@
-@tailwind base;
-/* Brauzerlar orasidagi farqlarni normallashtiradi */
 
-@tailwind components;
-/* Tailwind komponent klasslarini qo'shadi */
 
-@tailwind utilities;
+@import "tailwindcss";
 /* Tailwind utility klasslarini qo'shadi (bg-blue-500 kabilar) */
 
 /* Qo'shimcha global stillar */
