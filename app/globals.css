@@ -1,26 +1,35 @@
-@import "tailwindcss";
+@tailwind base;
+/* Brauzerlar orasidagi farqlarni normallashtiradi */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@tailwind components;
+/* Tailwind komponent klasslarini qo'shadi */
+
+@tailwind utilities;
+/* Tailwind utility klasslarini qo'shadi (bg-blue-500 kabilar) */
+
+/* Qo'shimcha global stillar */
+* {
+  /* * - barcha elementlarga qo'llanadi */
+  box-sizing: border-box;
+  /* padding va border kenglik/balandlik hisoblashga kiritiladi */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  /* Sahifa bo'ylab aylantirish silliq bo'ladi */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Mac'da shrift silliqroq ko'rsatiladi */
+  -moz-osx-font-smoothing: grayscale;
+  /* Firefox'da shrift silliqroq ko'rsatiladi */
+}
+
+/* Line clamp yordamchi klassi */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }

@@ -1,65 +1,93 @@
-import Image from "next/image";
+import { getAllPosts } from '@/lib/api';
+// API funksiyamizni import qilamiz
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+import PostCard from '@/app/components/PostCard';
+// PostCard komponentimizni import qilamiz
+
+import ErrorMessage from '@/app/components/ErrorMessage';
+// ErrorMessage komponentimizni import qilamiz
+
+// Server Component bo'lgani uchun async qilishimiz mumkin!
+export default async function HomePage() {
+
+  let posts = null;  // Postlar o'zgaruvchisi (boshlang'ichda null)
+  let error = null;  // Xato o'zgaruvchisi (boshlang'ichda null)
+
+  try {
+    // try - kodni sinab ko'ramiz
+    posts = await getAllPosts();
+    // Agar muvaffaqiyatli bo'lsa, posts o'zgaruvchisiga saqlanadi
+  } catch (err) {
+    // catch - xato yuz bersa bu blok ishlaydi
+    error = err instanceof Error ? err.message : 'Noma\'lum xato';
+    // instanceof Error - xato Error obyektimi tekshiramiz
+    // ternary operator: shart ? ha_bo'lsa : yo'q_bo'lsa
+  }
+
+  // Agar xato bo'lsa, ErrorMessage komponentini ko'rsatamiz
+  if (error) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <ErrorMessage message={error} />
+        {/* message props'ini xato matni bilan uzatamiz */}
       </main>
-    </div>
+    );
+  }
+
+  // Asosiy render
+  return (
+    <main className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* container - markazlashtirilgan kontent */}
+      {/* mx-auto - gorizontal avtomatik margin (markazlashtirish) */}
+      {/* px-4 - gorizontal 16px padding */}
+      {/* py-8 - vertikal 32px padding */}
+      {/* max-w-6xl - maksimal kenglik */}
+
+      {/* Sarlavha qismi */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          📝 Postlar Ro'yxati
+        </h1>
+        <p className="text-gray-500">
+          JSONPlaceholder API'dan olingan postlar —{' '}
+          {/* {' '} - bo'sh joy qo'shish uchun */}
+          <span className="font-semibold text-blue-600">
+            {posts?.length ?? 0} ta post
+            {/* posts?.length - posts null bo'lsa xato bermaydi (optional chaining) */}
+            {/* ?? 0 - posts null bo'lsa 0 ko'rsatadi (nullish coalescing) */}
+          </span>
+        </p>
+      </div>
+
+      {/* Postlar grid (to'r) ko'rinishida */}
+      {posts && posts.length > 0 ? (
+        // posts mavjud va bo'sh emas bo'lsa
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* grid - CSS Grid layout */}
+          {/* grid-cols-1 - kichik ekranda 1 ustun */}
+          {/* sm:grid-cols-2 - o'rta ekranda 2 ustun */}
+          {/* lg:grid-cols-3 - katta ekranda 3 ustun */}
+          {/* gap-5 - elementlar orasida 20px bo'shliq */}
+
+          {posts.map((post) => (
+            // .map() - array elementlarini birma-bir aylanib chiqadi
+            // har bir post uchun PostCard yaratadi
+            <PostCard
+              key={post.id}
+              // key - React'ga har bir element noyob ekanligini bildiradi
+              // List render qilganda key ALBATTA kerak!
+              post={post}
+              // post props'ini uzatamiz
+            />
+          ))}
+        </div>
+      ) : (
+        // posts bo'sh yoki null bo'lsa
+        <div className="text-center py-20 text-gray-500">
+          <p className="text-5xl mb-4">📭</p>
+          <p className="text-lg">Hech qanday post topilmadi</p>
+        </div>
+      )}
+    </main>
   );
 }
